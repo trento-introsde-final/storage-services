@@ -17,4 +17,5 @@ WebContent/WEB-INF/lib/
 .DS_Store
 .classpath
 .project
-
+.idea/
+.settings/
