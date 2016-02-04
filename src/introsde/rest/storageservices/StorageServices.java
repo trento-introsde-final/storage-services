@@ -116,8 +116,6 @@ public class StorageServices {
 			jsonResponse += "}}";
 			
 			return Response.ok(jsonResponse).build();
-		
-			//return Response.ok().build();
 		} else {
 			jsonResponse += "{\"status\": \"ERROR\","
 					+ "\"error\": \"We have encoutered some errors!!\"}";
