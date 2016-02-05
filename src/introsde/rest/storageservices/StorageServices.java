@@ -20,18 +20,18 @@ import org.json.JSONObject;
 
 @Stateless // will work only inside a Java EE application
 @LocalBean // will work only inside a Java EE application
-@Path("/storageservices")
+@Path("/")
 public class StorageServices {
 	
 	@GET
-	@Path("/hola")
+	@Path("hola")
 	@Produces(MediaType.TEXT_PLAIN)
 	public String hola(){
 		return "Hola";
 	}
 	
 	@GET
-    @Path("/pretty-pic")
+    @Path("pretty-pic")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getPrettyPic() throws Exception {
 		
@@ -78,7 +78,7 @@ public class StorageServices {
 	}
 	
 	@GET
-    @Path("/motivation-quote")
+    @Path("motivation-quote")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getMotivationQuote() throws Exception {
 		
