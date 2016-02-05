@@ -7,11 +7,8 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -24,15 +21,7 @@ import org.json.JSONObject;
 @LocalBean
 public class PictureResource {
 
-	@Context
-    UriInfo uriInfo;
-    @Context
-    Request request;
-
-    public PictureResource(UriInfo uriInfo, Request request) {
-        this.uriInfo = uriInfo;
-        this.request = request;
-    }
+    public PictureResource() {}
     
     @GET
     @Produces({MediaType.APPLICATION_JSON})
@@ -76,7 +65,7 @@ public class PictureResource {
 		} else {
 			jsonResponse += "{\"status\": \"ERROR\","
 					+ "\"error\": \""+response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase()+"\"}";
-			return Response.ok(jsonResponse).build();
+			return Response.status(404).entity(jsonResponse).build();
 		}
     }
 }

@@ -7,11 +7,8 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -22,16 +19,8 @@ import org.json.JSONObject;
 @Stateless
 @LocalBean
 public class QuoteResource {
-	
-	@Context
-    UriInfo uriInfo;
-    @Context
-    Request request;
 
-    public QuoteResource(UriInfo uriInfo, Request request) {
-        this.uriInfo = uriInfo;
-        this.request = request;
-    }
+    public QuoteResource() {}
     
     @GET
     @Produces({MediaType.APPLICATION_JSON})
