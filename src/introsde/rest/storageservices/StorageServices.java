@@ -24,6 +24,13 @@ import org.json.JSONObject;
 public class StorageServices {
 	
 	@GET
+	@Path("/hola")
+	@Produces(MediaType.TEXT_PLAIN)
+	public String hola(){
+		return "Hola";
+	}
+	
+	@GET
     @Path("/pretty-pic")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getPrettyPic() throws Exception {
@@ -47,7 +54,7 @@ public class StorageServices {
 		
 		JSONObject o = new JSONObject(result.toString());
 		
-		if(response.getStatusLine().getStatusCode() == 200){
+		if(response.getStatusLine().getStatusCode() == 200 && o.getString("status") != "ERROR"){
 			
 			jsonResponse += "{\"status\": \"OK\",";
 			
@@ -65,12 +72,9 @@ public class StorageServices {
 			return Response.ok(jsonResponse).build();
 		} else {
 			jsonResponse += "{\"status\": \"ERROR\","
-					+ "\"error\": \"We have encoutered some errors!!\"}";
-			//response.getStatusLine().getReasonPhrase();
+					+ "\"error\": \""+response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase()+"\"}";
 			return Response.ok(jsonResponse).build();
 		}
-		
-		//return Response.ok().build();
 	}
 	
 	@GET
@@ -97,7 +101,7 @@ public class StorageServices {
 		
 		JSONObject o = new JSONObject(result.toString());
 		
-		if(response.getStatusLine().getStatusCode() == 200){
+		if(response.getStatusLine().getStatusCode() == 200 && o.getString("status") != "ERROR"){
 			jsonResponse += "{\"status\": \"OK\",";
 			
 			jsonResponse += "\"result\": {";
@@ -118,9 +122,22 @@ public class StorageServices {
 			return Response.ok(jsonResponse).build();
 		} else {
 			jsonResponse += "{\"status\": \"ERROR\","
-					+ "\"error\": \"We have encoutered some errors!!\"}";
+					+ "\"error\": \""+response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase()+"\"}";
 			return Response.ok(jsonResponse).build();
 		}
 	}
-
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
