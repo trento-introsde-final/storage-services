@@ -35,7 +35,6 @@ public class PictureResource {
     public Response getPicture() throws Exception{
 		HttpClient client = new DefaultHttpClient();
 		HttpGet request = new HttpGet(adapterUrl+"instagram-pics");
-		System.out.println(adapterUrl+"instagram-pics");
 		HttpResponse response = client.execute(request);
 		
 		BufferedReader rd = new BufferedReader(

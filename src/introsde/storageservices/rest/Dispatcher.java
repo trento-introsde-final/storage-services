@@ -5,12 +5,16 @@ import javax.ejb.Stateless;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriInfo;
 
 @Stateless
 @LocalBean
 @Path("/")
 public class Dispatcher {
+		@Context
+	    UriInfo uriInfo;
 
 	    /**
 	     * Very important to say hello before requesting anything. Also to wake heroku up
@@ -34,13 +38,13 @@ public class Dispatcher {
 	    }
 	    
 	    @Path("goal-types")
-	    public GoalResource routeGoal() {
+	    public GoalResource getGoal() {
 	        return new GoalResource();
 	    }
 	    
 	    @Path("users")
 	    public UsersResource getUsers() {
-	        return new UsersResource();
+	        return new UsersResource(uriInfo);
 	    }
 	    
 	    @Path("user-id")

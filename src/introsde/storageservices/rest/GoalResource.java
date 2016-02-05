@@ -66,7 +66,6 @@ public class GoalResource {
 		
 		HttpClient client = new DefaultHttpClient();
 		HttpGet request = new HttpGet(localDBUrl+"goal-types/"+goalType);
-		System.out.println(localDBUrl+"goal-types/"+goalType);
 		HttpResponse response = client.execute(request);
 		
 		BufferedReader rd = new BufferedReader(
