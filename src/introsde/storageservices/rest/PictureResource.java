@@ -17,22 +17,25 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import introsde.storageservices.util.UrlInfo;
+
 @Stateless
 @LocalBean
 public class PictureResource {
+	UrlInfo u;
+	String adapterUrl = "", jsonResponse = "";
 
-    public PictureResource() {}
+    public PictureResource() {
+    	u = new UrlInfo();
+		adapterUrl = u.getAdapterURL();
+    }
     
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     public Response getPicture() throws Exception{
-    	
-    	String adapter_pic = "https://radiant-dawn-54444.herokuapp.com/instagram-pics";
-		
-		String jsonResponse = "";
-		
 		HttpClient client = new DefaultHttpClient();
-		HttpGet request = new HttpGet(adapter_pic);
+		HttpGet request = new HttpGet(adapterUrl+"instagram-pics");
+		System.out.println(adapterUrl+"instagram-pics");
 		HttpResponse response = client.execute(request);
 		
 		BufferedReader rd = new BufferedReader(
@@ -50,7 +53,7 @@ public class PictureResource {
 			
 			jsonResponse += "{\"status\": \"OK\",";
 			
-			JSONArray arr = o.getJSONArray("result");
+			JSONArray arr = o.getJSONArray("results");
 			
 			jsonResponse += "\"picture\": {";
 			

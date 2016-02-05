@@ -24,13 +24,28 @@ public class Dispatcher {
 	    }
 
 	    @Path("pretty-pic")
-	    public PictureResource routeGoal() {
+	    public PictureResource getPicture() {
 	        return new PictureResource();
 	    }
 	    
 	    @Path("motivation-quote")
-	    public QuoteResource routeUserCollection() {
+	    public QuoteResource getQuote() {
 	        return new QuoteResource();
+	    }
+	    
+	    @Path("goal-types")
+	    public GoalResource routeGoal() {
+	        return new GoalResource();
+	    }
+	    
+	    @Path("users")
+	    public UsersResource getUsers() {
+	        return new UsersResource();
+	    }
+	    
+	    @Path("user-id")
+	    public SlackResource getUserID() {
+	        return new SlackResource();
 	    }
 }
 
