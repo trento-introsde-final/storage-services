@@ -245,13 +245,25 @@ public class UsersResource {
 		HttpResponse response = httpClient.execute(postRequest);		
 
 		if (response.getStatusLine().getStatusCode() == 400) {
-			jsonResponse = "{\"status\": \"ERROR\","
-					+ "\"error\": \""+response.getStatusLine().getStatusCode()+"\"}";
-			return Response.status(400).entity(jsonResponse).build();
+			BufferedReader rd = new BufferedReader(
+                    new InputStreamReader(response.getEntity().getContent()));
+
+			StringBuffer result = new StringBuffer();
+			String line = "";
+			while ((line = rd.readLine()) != null) {
+				result.append(line);
+			}
+			return Response.status(400).entity(result.toString()).build();
 		} else if (response.getStatusLine().getStatusCode() == 404) {
-			jsonResponse = "{\"status\": \"ERROR\","
-					+ "\"error\": \""+response.getStatusLine().getStatusCode()+"\"}";
-			return Response.status(404).entity(jsonResponse).build();
+			BufferedReader rd = new BufferedReader(
+                    new InputStreamReader(response.getEntity().getContent()));
+
+			StringBuffer result = new StringBuffer();
+			String line = "";
+			while ((line = rd.readLine()) != null) {
+				result.append(line);
+			}
+			return Response.status(404).entity(result.toString()).build();
 		} else {
 			BufferedReader rd = new BufferedReader(
                     new InputStreamReader(response.getEntity().getContent()));
