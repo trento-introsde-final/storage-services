@@ -157,15 +157,26 @@ public class UsersResource {
 		}
 		stringlocation = new URI(location);
 		
-
 		if (response.getStatusLine().getStatusCode() == 400) {
-			jsonResponse = "{\"status\": \"ERROR\","
-					+ "\"error\": \""+response.getStatusLine().getStatusCode()+"\"}";
-			return Response.status(400).entity(jsonResponse).build();
+			BufferedReader rd = new BufferedReader(
+                    new InputStreamReader(response.getEntity().getContent()));
+
+			StringBuffer result = new StringBuffer();
+			String line = "";
+			while ((line = rd.readLine()) != null) {
+				result.append(line);
+			}
+			return Response.status(400).entity(result.toString()).build();
 		} else if (response.getStatusLine().getStatusCode() == 404) {
-			jsonResponse = "{\"status\": \"ERROR\","
-					+ "\"error\": \""+response.getStatusLine().getStatusCode()+"\"}";
-			return Response.status(404).entity(jsonResponse).build();
+			BufferedReader rd = new BufferedReader(
+                    new InputStreamReader(response.getEntity().getContent()));
+
+			StringBuffer result = new StringBuffer();
+			String line = "";
+			while ((line = rd.readLine()) != null) {
+				result.append(line);
+			}
+			return Response.status(404).entity(result.toString()).build();
 		} else {
 			BufferedReader rd = new BufferedReader(
                     new InputStreamReader(response.getEntity().getContent()));
@@ -206,15 +217,26 @@ public class UsersResource {
 		}
 		stringlocation = new URI(location);
 		
-
 		if (response.getStatusLine().getStatusCode() == 400) {
-			jsonResponse = "{\"status\": \"ERROR\","
-					+ "\"error\": \""+response.getStatusLine().getStatusCode()+"\"}";
-			return Response.status(400).entity(jsonResponse).build();
+			BufferedReader rd = new BufferedReader(
+                    new InputStreamReader(response.getEntity().getContent()));
+
+			StringBuffer result = new StringBuffer();
+			String line = "";
+			while ((line = rd.readLine()) != null) {
+				result.append(line);
+			}
+			return Response.status(400).entity(result.toString()).build();
 		} else if (response.getStatusLine().getStatusCode() == 404) {
-			jsonResponse = "{\"status\": \"ERROR\","
-					+ "\"error\": \""+response.getStatusLine().getStatusCode()+"\"}";
-			return Response.status(404).entity(jsonResponse).build();
+			BufferedReader rd = new BufferedReader(
+                    new InputStreamReader(response.getEntity().getContent()));
+
+			StringBuffer result = new StringBuffer();
+			String line = "";
+			while ((line = rd.readLine()) != null) {
+				result.append(line);
+			}
+			return Response.status(404).entity(result.toString()).build();
 		} else {
 			BufferedReader rd = new BufferedReader(
                     new InputStreamReader(response.getEntity().getContent()));
@@ -235,6 +257,7 @@ public class UsersResource {
     @Consumes({MediaType.APPLICATION_JSON})
     @Path("{userId}")
     public Response updatePerson(@PathParam("userId") int userId, String inputUser) throws Exception{
+    	
     	DefaultHttpClient httpClient = new DefaultHttpClient();
     	HttpPut postRequest = new HttpPut(localDBUrl+"users/"+userId);
 		
@@ -244,7 +267,7 @@ public class UsersResource {
 		
 		HttpResponse response = httpClient.execute(postRequest);		
 
-		if (response.getStatusLine().getStatusCode() == 400) {
+		if (response.getStatusLine().getStatusCode() == 500) {
 			BufferedReader rd = new BufferedReader(
                     new InputStreamReader(response.getEntity().getContent()));
 
@@ -253,7 +276,59 @@ public class UsersResource {
 			while ((line = rd.readLine()) != null) {
 				result.append(line);
 			}
-			return Response.status(400).entity(result.toString()).build();
+			return Response.status(500).entity(result.toString()).build();
+		} else if (response.getStatusLine().getStatusCode() == 404) {
+			BufferedReader rd = new BufferedReader(
+                    new InputStreamReader(response.getEntity().getContent()));
+
+			StringBuffer result = new StringBuffer();
+			String line = "";
+			while ((line = rd.readLine()) != null) {
+				result.append(line);
+			}
+			return Response.status(404).entity(result.toString()).build();
+		} else {
+			BufferedReader rd = new BufferedReader(
+                    new InputStreamReader(response.getEntity().getContent()));
+
+			StringBuffer result = new StringBuffer();
+			String line = "";
+			while ((line = rd.readLine()) != null) {
+				result.append(line);
+			}
+			
+			httpClient.getConnectionManager().shutdown();
+			return Response.ok(result.toString()).build();
+		}
+    }
+    
+    @PUT
+    @Produces({MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Path("{userId}/goals/{goalType}")
+    public Response setPersonalGoal(
+    		@PathParam("userId") int userId, 
+    		@PathParam("goalType") String goalType, String iGoal) throws Exception{
+    	
+    	DefaultHttpClient httpClient = new DefaultHttpClient();
+    	HttpPut postRequest = new HttpPut(localDBUrl+"users/"+userId+"/goals/"+goalType);
+		
+		StringEntity input = new StringEntity(iGoal);
+		input.setContentType("application/json");
+		postRequest.setEntity(input);
+		
+		HttpResponse response = httpClient.execute(postRequest);		
+
+		if (response.getStatusLine().getStatusCode() == 500) {
+			BufferedReader rd = new BufferedReader(
+                    new InputStreamReader(response.getEntity().getContent()));
+
+			StringBuffer result = new StringBuffer();
+			String line = "";
+			while ((line = rd.readLine()) != null) {
+				result.append(line);
+			}
+			return Response.status(500).entity(result.toString()).build();
 		} else if (response.getStatusLine().getStatusCode() == 404) {
 			BufferedReader rd = new BufferedReader(
                     new InputStreamReader(response.getEntity().getContent()));
