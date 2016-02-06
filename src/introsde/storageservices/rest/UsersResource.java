@@ -131,7 +131,6 @@ public class UsersResource {
 		}
     }
     
-    // Still working on it
     @POST
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
@@ -149,8 +148,6 @@ public class UsersResource {
 		
 		Header[] headers = response.getAllHeaders();
 		
-		
-		//final StringBuilder sb = new StringBuilder();
 		for(Header h: headers) {
 			if(h.getName().equals("Location")){
 				location = h.getValue();
@@ -174,9 +171,54 @@ public class UsersResource {
 			}
 			
 			httpClient.getConnectionManager().shutdown();
-			jsonResponse = "{\"status\": \"OK\"}";
 			return Response.created(stringlocation).entity(result.toString()).build();
-		} 
+		}
+    }
+    
+    @POST
+    @Path("{userId}/runs")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response registerRun(@PathParam("userId") int userId) throws Exception{
+    	
+    	DefaultHttpClient httpClient = new DefaultHttpClient();
+		HttpPost postRequest = new HttpPost(localDBUrl+"users/"+userId+"/runs");
+		
+		StringEntity input = new StringEntity("{\"distance\": 5000,\"calories\": 3000,\"start_date\": 1454512708,\"moving_time\": 1800,"
+				+ "\"elevation_gain\": 200,\"max_speed\": 3,\"avg_speed\": 2.5}");
+		input.setContentType("application/json");
+		postRequest.setEntity(input);
+		
+		URI stringlocation = null;
+		
+		HttpResponse response = httpClient.execute(postRequest);
+		
+		Header[] headers = response.getAllHeaders();
+		
+		for(Header h: headers) {
+			if(h.getName().equals("Location")){
+				location = h.getValue();
+			}
+		}
+		stringlocation = new URI(location);
+		
+
+		if (response.getStatusLine().getStatusCode() != 201) {
+			jsonResponse = "{\"status\": \"ERROR\","
+					+ "\"error\": \""+response.getStatusLine().getStatusCode()+"\"}";
+			return Response.status(400).entity(jsonResponse).build();
+		} else {
+			BufferedReader rd = new BufferedReader(
+                    new InputStreamReader(response.getEntity().getContent()));
+
+			StringBuffer result = new StringBuffer();
+			String line = "";
+			while ((line = rd.readLine()) != null) {
+				result.append(line);
+			}
+			
+			httpClient.getConnectionManager().shutdown();
+			return Response.created(stringlocation).entity(result.toString()).build();
+		}
     }
 	
 	
