@@ -48,9 +48,45 @@ public class UsersResource {
 	}
 	
 	@GET
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response getUsers() throws Exception{
+		
+		HttpClient client = new DefaultHttpClient();
+		HttpGet request = new HttpGet(localDBUrl+"users/");
+		HttpResponse response = client.execute(request);
+		
+		BufferedReader rd = new BufferedReader(
+                new InputStreamReader(response.getEntity().getContent()));
+
+		StringBuffer result = new StringBuffer();
+		String line = "";
+		while ((line = rd.readLine()) != null) {
+			result.append(line);
+		}
+		
+		JSONObject o = new JSONObject(result);
+		
+		System.out.println(o);
+		
+		if(response.getStatusLine().getStatusCode() == 200){
+			return Response.ok(result.toString()).build();
+			
+		} else if(response.getStatusLine().getStatusCode() == 404){
+			jsonResponse += "{\"status\": \"ERROR\","
+					+ "\"error\": \""+o.getString("error")+"\"}";
+			return Response.status(404).entity(jsonResponse).build();
+			
+		} else {
+			jsonResponse += "{\"status\": \"ERROR\","
+					+ "\"error\": \""+response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase()+"\"}";
+			return Response.status(404).entity(jsonResponse).build();
+		}		
+	}
+	
+	@GET
     @Path("{userId}/goals")
     @Produces({MediaType.APPLICATION_JSON})
-    public Response getPersonalGoals(@PathParam("userId") int userId) throws Exception{
+    public Response getPersonalGoals(@PathParam("userId") int userId) throws Exception {
 		
 		HttpClient client = new DefaultHttpClient();
 		HttpGet request = new HttpGet(localDBUrl+"users/"+userId+"/goals");
@@ -65,7 +101,7 @@ public class UsersResource {
 			result.append(line);
 		}
 		
-		JSONObject o = new JSONObject(result.toString());
+		JSONObject o = new JSONObject(result);
 		
 		if(response.getStatusLine().getStatusCode() == 200 && o.getString("status") != "ERROR"){
 			
@@ -82,7 +118,6 @@ public class UsersResource {
 			return Response.status(404).entity(jsonResponse).build();
 			
 		} else {
-			
 			jsonResponse += "{\"status\": \"ERROR\","
 					+ "\"error\": \""+response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase()+"\"}";
 			return Response.status(404).entity(jsonResponse).build();
@@ -109,7 +144,7 @@ public class UsersResource {
 			result.append(line);
 		}
 		
-		JSONObject o = new JSONObject(result.toString());
+		JSONObject o = new JSONObject(result);
 		
 		if(response.getStatusLine().getStatusCode() == 200 && o.getString("status") != "ERROR"){
 			
