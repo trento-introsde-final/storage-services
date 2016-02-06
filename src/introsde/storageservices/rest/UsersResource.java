@@ -37,13 +37,14 @@ import introsde.storageservices.util.UrlInfo;
 public class UsersResource {
 
 	UrlInfo u;
-	String localDBUrl = "", jsonResponse = "", location = "";
+	String localDBUrl = "", jsonResponse = "", location = "", storageUrl = "";
 	@Context
     UriInfo uriInfo;
 
 	public UsersResource(UriInfo uriInfo) {
 		u = new UrlInfo();
 		localDBUrl = u.getLocalDBURL();
+		storageUrl = u.getStorageURL();
 		this.uriInfo = uriInfo;
 	}
 	
@@ -66,8 +67,6 @@ public class UsersResource {
 		
 		JSONObject o = new JSONObject(result);
 		
-		System.out.println(o);
-		
 		if(response.getStatusLine().getStatusCode() == 200){
 			return Response.ok(result.toString()).build();
 			
@@ -86,7 +85,7 @@ public class UsersResource {
 	@GET
     @Path("{userId}/goals")
     @Produces({MediaType.APPLICATION_JSON})
-    public Response getPersonalGoals(@PathParam("userId") int userId) throws Exception {
+    public Response getPersonalGoals(@PathParam("userId") int userId) throws Exception{
 		
 		HttpClient client = new DefaultHttpClient();
 		HttpGet request = new HttpGet(localDBUrl+"users/"+userId+"/goals");
@@ -101,7 +100,7 @@ public class UsersResource {
 			result.append(line);
 		}
 		
-		JSONObject o = new JSONObject(result);
+		JSONObject o = new JSONObject(result.toString());
 		
 		if(response.getStatusLine().getStatusCode() == 200 && o.getString("status") != "ERROR"){
 			
@@ -144,7 +143,7 @@ public class UsersResource {
 			result.append(line);
 		}
 		
-		JSONObject o = new JSONObject(result);
+		JSONObject o = new JSONObject(result.toString());
 		
 		if(response.getStatusLine().getStatusCode() == 200 && o.getString("status") != "ERROR"){
 			
@@ -191,6 +190,10 @@ public class UsersResource {
 			}
 		}
 		stringlocation = new URI(location);
+		String path = stringlocation.getPath();
+		String idStr = path.substring(path.lastIndexOf('/') + 1);
+		int id = Integer.parseInt(idStr);
+		URI newlocation = new URI(storageUrl+"users/"+id);
 		
 		if (response.getStatusLine().getStatusCode() == 400) {
 			BufferedReader rd = new BufferedReader(
@@ -223,7 +226,7 @@ public class UsersResource {
 			}
 			
 			httpClient.getConnectionManager().shutdown();
-			return Response.created(stringlocation).entity(result.toString()).build();
+			return Response.created(newlocation).entity(result.toString()).build();
 		}
     }
     
