@@ -57,11 +57,11 @@ public class SlackResource {
 			
 		} else if(response.getStatusLine().getStatusCode() == 404){
 			jsonResponse += "{\"status\": \"ERROR\","
-					+ "\"error\": \""+o.getString("message")+"\"}";
+					+ "\"error\": \""+o.getString("error")+"\"}";
 			return Response.status(404).entity(jsonResponse).build();
 		} else if(o.getString("status") == "ERROR"){
 			jsonResponse += "{\"status\": \"ERROR\","
-					+ "\"error\": \""+o.getString("message")+"\"}";
+					+ "\"error\": \""+o.getString("error")+"\"}";
 			
 			return Response.status(404).entity(jsonResponse).build();
 		} else {

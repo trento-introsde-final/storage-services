@@ -1,7 +1,6 @@
 package introsde.storageservices.rest;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 
@@ -36,7 +35,7 @@ import introsde.storageservices.util.UrlInfo;
 public class UsersResource {
 
 	UrlInfo u;
-	String localDBUrl = "", jsonResponse = "";
+	String localDBUrl = "", jsonResponse = "", location = "";
 	@Context
     UriInfo uriInfo;
 
@@ -72,12 +71,12 @@ public class UsersResource {
 			
 		} else if(response.getStatusLine().getStatusCode() == 404){
 			jsonResponse += "{\"status\": \"ERROR\","
-					+ "\"error\": \""+o.getString("message")+"\"}";
+					+ "\"error\": \""+o.getString("error")+"\"}";
 			return Response.status(404).entity(jsonResponse).build();
 			
 		} else if(o.getString("status") == "ERROR"){
 			jsonResponse += "{\"status\": \"ERROR\","
-					+ "\"error\": \""+o.getString("message")+"\"}";
+					+ "\"error\": \""+o.getString("error")+"\"}";
 			return Response.status(404).entity(jsonResponse).build();
 			
 		} else {
@@ -116,12 +115,12 @@ public class UsersResource {
 			
 		} else if(response.getStatusLine().getStatusCode() == 404){
 			jsonResponse += "{\"status\": \"ERROR\","
-					+ "\"error\": \""+o.getString("message")+"\"}";
+					+ "\"error\": \""+o.getString("error")+"\"}";
 			return Response.status(404).entity(jsonResponse).build();
 			
 		} else if(o.getString("status") == "ERROR"){
 			jsonResponse += "{\"status\": \"ERROR\","
-					+ "\"error\": \""+o.getString("message")+"\"}";
+					+ "\"error\": \""+o.getString("error")+"\"}";
 			return Response.status(404).entity(jsonResponse).build();
 			
 		} else {
@@ -137,41 +136,52 @@ public class UsersResource {
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
     public Response newPerson() throws Exception{
-    	DefaultHttpClient httpClient = new DefaultHttpClient();
+    	
+		DefaultHttpClient httpClient = new DefaultHttpClient();
 		HttpPost postRequest = new HttpPost(localDBUrl+"users");
-		URI location = null;
 		
 		StringEntity input = new StringEntity("{\"slack_user_id\": \"UB23324\",\"firstname\": \"Andrea\"}");
 		input.setContentType("application/json");
 		postRequest.setEntity(input);
+		URI stringlocation = null;
 		
 		HttpResponse response = httpClient.execute(postRequest);
-		//Header[] loc = response.getHeaders("location");
-		//System.out.println(loc);
-		//URI location = new URI(loc);
+		
+		Header[] headers = response.getAllHeaders();
+		
+		
+		//final StringBuilder sb = new StringBuilder();
+		for(Header h: headers) {
+			if(h.getName().equals("Location")){
+				location = h.getValue();
+			}
+		}
+		stringlocation = new URI(location);
+		
 
 		if (response.getStatusLine().getStatusCode() != 201) {
-			throw new RuntimeException("Failed : HTTP error code : "
-				+ response.getStatusLine().getStatusCode());
-		}
+			jsonResponse = "{\"status\": \"ERROR\","
+					+ "\"error\": \""+response.getStatusLine().getStatusCode()+"\"}";
+			return Response.status(400).entity(jsonResponse).build();
+		} else {
+			BufferedReader rd = new BufferedReader(
+                    new InputStreamReader(response.getEntity().getContent()));
 
-		BufferedReader br = new BufferedReader(
-                        new InputStreamReader((response.getEntity().getContent())));
-
-		String output;
-		System.out.println("Output from Server .... \n");
-		while ((output = br.readLine()) != null) {
-			System.out.println(output);
-		}
-
-		httpClient.getConnectionManager().shutdown();
-		
-		JSONObject o = new JSONObject(output);
-		String id = o.getString("id");
-		location = new URI(uriInfo.getAbsolutePath().toString()+"/"+id);
-    	
-		return Response.created(location).entity(output).build();
+			StringBuffer result = new StringBuffer();
+			String line = "";
+			while ((line = rd.readLine()) != null) {
+				result.append(line);
+			}
+			
+			httpClient.getConnectionManager().shutdown();
+			jsonResponse = "{\"status\": \"OK\"}";
+			return Response.created(stringlocation).entity(result.toString()).build();
+		} 
     }
 	
 	
 }
+
+
+
+
