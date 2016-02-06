@@ -10,6 +10,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -24,6 +25,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONObject;
@@ -134,12 +136,12 @@ public class UsersResource {
     @POST
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
-    public Response newPerson() throws Exception{
+    public Response newPerson(String inputUser) throws Exception{
     	
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		HttpPost postRequest = new HttpPost(localDBUrl+"users");
 		
-		StringEntity input = new StringEntity("{\"slack_user_id\": \"UB23324\",\"firstname\": \"Andrea\"}");
+		StringEntity input = new StringEntity(inputUser);
 		input.setContentType("application/json");
 		postRequest.setEntity(input);
 		URI stringlocation = null;
@@ -156,10 +158,14 @@ public class UsersResource {
 		stringlocation = new URI(location);
 		
 
-		if (response.getStatusLine().getStatusCode() != 201) {
+		if (response.getStatusLine().getStatusCode() == 400) {
 			jsonResponse = "{\"status\": \"ERROR\","
 					+ "\"error\": \""+response.getStatusLine().getStatusCode()+"\"}";
 			return Response.status(400).entity(jsonResponse).build();
+		} else if (response.getStatusLine().getStatusCode() == 404) {
+			jsonResponse = "{\"status\": \"ERROR\","
+					+ "\"error\": \""+response.getStatusLine().getStatusCode()+"\"}";
+			return Response.status(404).entity(jsonResponse).build();
 		} else {
 			BufferedReader rd = new BufferedReader(
                     new InputStreamReader(response.getEntity().getContent()));
@@ -178,13 +184,12 @@ public class UsersResource {
     @POST
     @Path("{userId}/runs")
     @Produces({MediaType.APPLICATION_JSON})
-    public Response registerRun(@PathParam("userId") int userId) throws Exception{
+    public Response registerRun(@PathParam("userId") int userId, String inputRun) throws Exception{
     	
     	DefaultHttpClient httpClient = new DefaultHttpClient();
 		HttpPost postRequest = new HttpPost(localDBUrl+"users/"+userId+"/runs");
 		
-		StringEntity input = new StringEntity("{\"distance\": 5000,\"calories\": 3000,\"start_date\": 1454512708,\"moving_time\": 1800,"
-				+ "\"elevation_gain\": 200,\"max_speed\": 3,\"avg_speed\": 2.5}");
+		StringEntity input = new StringEntity(inputRun);
 		input.setContentType("application/json");
 		postRequest.setEntity(input);
 		
@@ -202,10 +207,14 @@ public class UsersResource {
 		stringlocation = new URI(location);
 		
 
-		if (response.getStatusLine().getStatusCode() != 201) {
+		if (response.getStatusLine().getStatusCode() == 400) {
 			jsonResponse = "{\"status\": \"ERROR\","
 					+ "\"error\": \""+response.getStatusLine().getStatusCode()+"\"}";
 			return Response.status(400).entity(jsonResponse).build();
+		} else if (response.getStatusLine().getStatusCode() == 404) {
+			jsonResponse = "{\"status\": \"ERROR\","
+					+ "\"error\": \""+response.getStatusLine().getStatusCode()+"\"}";
+			return Response.status(404).entity(jsonResponse).build();
 		} else {
 			BufferedReader rd = new BufferedReader(
                     new InputStreamReader(response.getEntity().getContent()));
@@ -220,8 +229,43 @@ public class UsersResource {
 			return Response.created(stringlocation).entity(result.toString()).build();
 		}
     }
-	
-	
+    
+    @PUT
+    @Produces({MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Path("{userId}")
+    public Response updatePerson(@PathParam("userId") int userId, String inputUser) throws Exception{
+    	DefaultHttpClient httpClient = new DefaultHttpClient();
+    	HttpPut postRequest = new HttpPut(localDBUrl+"users/"+userId);
+		
+		StringEntity input = new StringEntity(inputUser);
+		input.setContentType("application/json");
+		postRequest.setEntity(input);
+		
+		HttpResponse response = httpClient.execute(postRequest);		
+
+		if (response.getStatusLine().getStatusCode() == 400) {
+			jsonResponse = "{\"status\": \"ERROR\","
+					+ "\"error\": \""+response.getStatusLine().getStatusCode()+"\"}";
+			return Response.status(400).entity(jsonResponse).build();
+		} else if (response.getStatusLine().getStatusCode() == 404) {
+			jsonResponse = "{\"status\": \"ERROR\","
+					+ "\"error\": \""+response.getStatusLine().getStatusCode()+"\"}";
+			return Response.status(404).entity(jsonResponse).build();
+		} else {
+			BufferedReader rd = new BufferedReader(
+                    new InputStreamReader(response.getEntity().getContent()));
+
+			StringBuffer result = new StringBuffer();
+			String line = "";
+			while ((line = rd.readLine()) != null) {
+				result.append(line);
+			}
+			
+			httpClient.getConnectionManager().shutdown();
+			return Response.ok(result.toString()).build();
+		}
+    }
 }
 
 
