@@ -1,5 +1,10 @@
-#trento-introsde-final
+#FitBot - IntroSDE Final Project - UNITN
 
-deployed on [https://stark-falls-89698.herokuapp.com/] [1]
+##Storage Services
 
-[1]: https://stark-falls-89698.herokuapp.com/
+Please check the full [project documentation] [2].
+
+Deployed on [https://storage-services.herokuapp.com/] [1]
+
+[1]: https://storage-services.herokuapp.com/
+[2]: https://github.com/trento-introsde-final/documentation
