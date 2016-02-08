@@ -54,10 +54,12 @@ public class PictureResource {
 			
 			JSONArray arr = o.getJSONArray("results");
 			
+			int random_hashtag = 0 + (int)(Math.random()*(arr.length()-1));
+			
 			jsonResponse += "\"picture\": {";
 			
-			String url = arr.getJSONObject(0).getString("url");
-			String thumbUrl = arr.getJSONObject(0).getString("thumbUrl");
+			String url = arr.getJSONObject(random_hashtag).getString("url");
+			String thumbUrl = arr.getJSONObject(random_hashtag).getString("thumbUrl");
 			jsonResponse += "\"url\": \""+url+"\",";
 			jsonResponse += "\"thumbUrl\": \""+thumbUrl+"\"";
 			
